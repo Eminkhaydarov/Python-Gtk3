@@ -32,7 +32,7 @@ class MainWindow(Gtk.Window):
         scrolled_window.add(self.listbox)
 
     def on_button_file_clicked(self, button):
-        default_file_path = "snakes_count_1000.csv"
+        default_file_path = "База для тестового.csv"
 
         spinner_window = SpinnerWindow(self)
         spinner_window.show_all()
@@ -43,8 +43,8 @@ class MainWindow(Gtk.Window):
         )  # Очищаем список перед загрузкой нового файла
 
     def on_button_api_clicked(self, button):
-        url1 = "https://jsonplaceholder.typicode.com/posts"
-        url2 = "https://jsonplaceholder.typicode.com/users"
+        url1 = "https://paycon.su/api1.php"
+        url2 = "https://paycon.su/api2.php"
 
         urls = [url1, url2]
 
@@ -57,8 +57,8 @@ class MainWindow(Gtk.Window):
 
     def update_listbox(self, rows):
         for row in rows:
-            row_str = str(row)
-            row_label = Gtk.Label(label=row_str, wrap=True)
+
+            row_label = Gtk.Label(label=row, wrap=True)
             self.listbox.add(row_label)
 
             # Установка свойства expand для метки, чтобы переносить строки по ширине окна

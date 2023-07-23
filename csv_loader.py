@@ -19,7 +19,7 @@ class CsvLoader(threading.Thread):
         with open(self.filename, "r") as file:
             reader = csv.DictReader(file)
             for row in reader:
-                rows.append(row)
+                rows.append(f"{row['Title']} {row['Price']}")
                 time.sleep(0.0001)
 
         GLib.idle_add(self.callback, rows)

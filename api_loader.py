@@ -27,7 +27,7 @@ class ApiLoader(threading.Thread):
                 if response.status_code == 200:
                     data = response.json()
                     for item in data:
-                        rows.append(item)
+                        rows.append(f"{item['name']} {item['price']}")
 
         async def fetch_all():
             await asyncio.gather(*[fetch_data(url) for url in self.urls])
