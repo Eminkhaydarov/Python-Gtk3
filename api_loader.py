@@ -1,28 +1,40 @@
-import concurrent.futures
-import requests
+import asyncio
+
+import threading
+
+
+import httpx
+
 import gi
 from gi.repository import GLib
 
 gi.require_version("Gtk", "3.0")
 
 
-def load_data(urls, callback):
-    rows = []
+class ApiLoader(threading.Thread):
+    def __init__(self, urls, callback, spinner_window):
+        threading.Thread.__init__(self)
+        self.urls = urls
+        self.callback = callback
+        self.spinner_window = spinner_window
 
-    with concurrent.futures.ThreadPoolExecutor() as executor:
-        future_to_url = {
-            executor.submit(requests.get, url): url for url in urls
-        }
+    def run(self):
+        rows = []
 
-        for future in concurrent.futures.as_completed(future_to_url):
-            url = future_to_url[future]
-            try:
-                response = future.result()
+        async def fetch_data(url):
+            async with httpx.AsyncClient() as client:
+                response = await client.get(url)
                 if response.status_code == 200:
                     data = response.json()
                     for item in data:
                         rows.append(item)
-            except Exception as e:
-                print(f"Error fetching data from {url}: {str(e)}")
 
-    GLib.idle_add(callback, rows)
+        async def fetch_all():
+            await asyncio.gather(*[fetch_data(url) for url in self.urls])
+
+        loop = asyncio.new_event_loop()
+        asyncio.set_event_loop(loop)
+        loop.run_until_complete(fetch_all())
+
+        GLib.idle_add(self.callback, rows)
+        GLib.idle_add(self.spinner_window.destroy)

@@ -1,7 +1,8 @@
 import gi
 from gi.repository import Gtk
 
-from api_loader import load_data
+from api_loader import ApiLoader
+from spinner_window import SpinnerWindow
 
 gi.require_version("Gtk", "3.0")
 from csv_loader import CsvLoader
@@ -33,7 +34,9 @@ class MainWindow(Gtk.Window):
     def on_button_file_clicked(self, button):
         default_file_path = "snakes_count_1000.csv"
 
-        loader = CsvLoader(default_file_path, self.update_listbox)
+        spinner_window = SpinnerWindow(self)
+        spinner_window.show_all()
+        loader = CsvLoader(default_file_path, self.update_listbox, spinner_window)
         loader.start()
         self.listbox.foreach(
             Gtk.Widget.destroy
@@ -47,9 +50,10 @@ class MainWindow(Gtk.Window):
 
         # Очистка списка
         self.listbox.foreach(Gtk.Widget.destroy)
-        load_data(urls, self.update_listbox)
-
-
+        spinner_window = SpinnerWindow(self)
+        spinner_window.show_all()
+        loader = ApiLoader(urls, self.update_listbox, spinner_window)
+        loader.start()
 
     def update_listbox(self, rows):
         for row in rows:
