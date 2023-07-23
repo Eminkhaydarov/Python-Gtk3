@@ -1,6 +1,8 @@
 import gi
 from gi.repository import Gtk
 
+from api_loader import load_data
+
 gi.require_version("Gtk", "3.0")
 from csv_loader import CsvLoader
 
@@ -14,6 +16,7 @@ class MainWindow(Gtk.Window):
         self.add(vbox)
 
         button_api = Gtk.Button(label="Загрузить из API")
+        button_api.connect("clicked", self.on_button_api_clicked)
         vbox.pack_start(button_api, False, False, 0)
 
         button_file = Gtk.Button(label="Загрузить из файла")
@@ -35,6 +38,18 @@ class MainWindow(Gtk.Window):
         self.listbox.foreach(
             Gtk.Widget.destroy
         )  # Очищаем список перед загрузкой нового файла
+
+    def on_button_api_clicked(self, button):
+        url1 = "https://jsonplaceholder.typicode.com/posts"
+        url2 = "https://jsonplaceholder.typicode.com/users"
+
+        urls = [url1, url2]
+
+        # Очистка списка
+        self.listbox.foreach(Gtk.Widget.destroy)
+        load_data(urls, self.update_listbox)
+
+
 
     def update_listbox(self, rows):
         for row in rows:
