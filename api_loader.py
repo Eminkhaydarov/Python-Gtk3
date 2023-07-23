@@ -1,12 +1,10 @@
 import asyncio
 
 import threading
-
-
 import httpx
-
 import gi
 from gi.repository import GLib
+
 
 gi.require_version("Gtk", "3.0")
 
